@@ -1,13 +1,17 @@
 class Controller{
   
+  MyShip ship;
   MySphere sun;
   ArrayList<MySphere> planetList;
   ArrayList<MySphere> moonList;
+  PFont font;
   
-  Controller(){
-    sun = new MySphere(75.0, loadImage("sun/2k_sun-compressor.jpg"), 0, 0, 0.1);
-    planetList = new ArrayList<MySphere>();
-    moonList = new ArrayList<MySphere>();
+  Controller(PFont font){
+    this.sun = new MySphere(75.0, loadImage("sun/2k_sun-compressor.jpg"), 0, 0, 0.1);
+    this.ship = new MyShip(loadShape("ship/10475_Rocket_Ship_v1_L3.obj"), loadImage("ship/10475_Rocket_Ship_v1_Diffuse.jpg"), 2.5);
+    this.planetList = new ArrayList<MySphere>();
+    this.moonList = new ArrayList<MySphere>();
+    this.font = font;
   }
   
   void createPlanets(){
@@ -15,7 +19,7 @@ class Controller{
     planetList.add(new MySphere(10.0, loadImage("planets/Martian-compressor.png"), 0.4, 0, -0.9));
     planetList.add(new MySphere(10.0, loadImage("planets/Alpine-compressor.png"), 0.5, 0.2, 0.8));
     planetList.add(new MySphere(13.0, loadImage("planets/Savannah-compressor.png"), 0.625, -0.05, 0.7));
-    planetList.add(new MySphere(25.0, loadImage("planets/2k_blue-compressor.jpg"), -0.7, -0.1, -0.6));
+    planetList.add(new MySphere(25.0, loadImage("planets/2k_blue-compressor.jpg"), -0.8, -0.1, -0.6));
     planetList.add(new MySphere(20.0, loadImage("planets/Icy-compressor.png"), -0.8, 0.2, 0.4));
     planetList.add(new MySphere(8.0, loadImage("planets/Swamp-compressor.png"), 0.9, -0, 0.25));
     planetList.add(new MySphere(12.5, loadImage("planets/Tropical-compressor.png"), 0.9, -0.2, -0.25));
@@ -29,20 +33,33 @@ class Controller{
   }
   
   void drawSun(){
-    updateRotation(sun);
+    updateSphereRotation(sun);
     drawSphere(sun);
+  }
+  
+  void drawShip(){
+    updateShipRotation(ship);
+    
+    pushMatrix();
+    translate(-100,-250,300);
+    rotateX(radians(200));
+    rotateY(radians(30));
+    rotateZ(radians(ship.rotationZ));
+    scale(0.1);
+    shape(ship.model);
+    popMatrix();
   }
   
   void drawAllPlanets(){
     for(MySphere planet: planetList){
-      updateRotation(planet);
+      updateSphereRotation(planet);
       drawSphere(planet);
     }
   }
   
   void drawAllMoons(){
     for(MySphere moon: moonList){
-      updateRotation(moon);
+      updateSphereRotation(moon);
     }
     
     drawMoon(planetList.get(0), moonList.get(0));
@@ -56,6 +73,13 @@ class Controller{
     rotateY(radians(sphere.rotationY));
     translate(sphere.translateX, sphere.translateY, 0);
     shape(sphere.sphereShape);
+    
+    pushMatrix();
+    rotateY(radians((-sphere.rotationY)-((mouseX*90/width)-45)));
+    textFont(font, sphere.sphereShape.getHeight()/2);
+    text(sphere.name, 0, 0.75*sphere.sphereShape.getHeight(), 25);
+    popMatrix();
+    
     popMatrix();
   }
   
@@ -73,7 +97,13 @@ class Controller{
     popMatrix();
   }
   
-  void updateRotation(MySphere sphere){
+  void updateShipRotation(MyShip ship){
+    ship.rotationZ += ship.drotationZ;
+    if(ship.rotationZ > 360) ship.rotationZ = 0;
+  }
+  
+  
+  void updateSphereRotation(MySphere sphere){
     sphere.rotationY += sphere.drotationY;
     if(sphere.rotationY > 360) sphere.rotationY = 0;
     else if (sphere.rotationY < -360) sphere.rotationY = 0;
