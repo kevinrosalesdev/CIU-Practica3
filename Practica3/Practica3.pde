@@ -28,8 +28,8 @@ void setup(){
 void draw(){
   //frameCounter++;
   //if(frameCounter == 10){
-    //ficherogif.addFrame();
-    //frameCounter = 0;
+  //  ficherogif.addFrame();
+  //  frameCounter = 0;
   //}
   
   controller.setBackground();
